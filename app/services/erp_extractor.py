@@ -7,6 +7,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+from app.config.settings import ERP_LOGIN_URL
+
 load_dotenv()
 
 
@@ -16,7 +18,7 @@ class ERPTaskExtractor:
         self.wait = None
         self.EMAIL = user_email
         self.PASSWORD = user_password
-        self.LOGIN_URL = "https://erp.softsuave.in/#login"
+        self.LOGIN_URL = ERP_LOGIN_URL
 
     def setup_driver(self):
         chrome_options = Options()
@@ -53,7 +55,7 @@ class ERPTaskExtractor:
         login_button.click()
 
         # Wait for redirect
-        time.sleep(2)
+        time.sleep(1)
         current_url = self.driver.current_url
         if "/login" not in current_url:
             print(f"Login successful: {current_url}")
@@ -64,7 +66,7 @@ class ERPTaskExtractor:
         task_url = "https://erp.softsuave.in/app/task/view/list"
         self.driver.get(task_url)
         self.wait.until(EC.presence_of_element_located((By.TAG_NAME, "body")))
-        time.sleep(2)
+        time.sleep(1)
         print(f"Navigated to tasks page")
 
     def extract_content(self, task_id):
@@ -107,7 +109,7 @@ class ERPTaskExtractor:
 
         # Get task URLs
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, "list-row-container")))
-        time.sleep(2)
+        time.sleep(1)
 
         task_rows = self.driver.find_elements(By.CLASS_NAME, "list-row-container")
         task_urls = []
@@ -146,7 +148,7 @@ class ERPTaskExtractor:
         print(f"Opened {len(tab_handles)} tabs")
 
         # Wait for loading
-        time.sleep(3)
+        time.sleep(1)
 
         # Extract from each tab
         extracted_data = {}
@@ -183,9 +185,7 @@ class ERPTaskExtractor:
             extracted_data = self.extract_all_tasks_parallel()
 
             tasks = ""
-
-            print("\nEXTRACTION RESULTS")
-            print("=" * 50)
+            tasks_arr = []
 
             for key, content in extracted_data.items():
                 # print(f"\n{key.upper()}:")
@@ -193,6 +193,7 @@ class ERPTaskExtractor:
                     # print(f"  {i}. {item}")
                     if item == "[No content]":
                         continue
+                    tasks_arr.append(item)
                     tasks += f"\n{item}"
             return tasks
 
