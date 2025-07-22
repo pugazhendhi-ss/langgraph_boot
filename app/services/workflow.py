@@ -1,10 +1,12 @@
 import json
+import os
 from typing import Dict, Any, TypedDict
 
 import openai
+from IPython.display import Image
 from langgraph.graph import StateGraph, END
 
-from app.config.settings import OPENAI_API_KEY
+from app.config.settings import OPENAI_API_KEY, VISUAL_GRAPH_DIR
 from app.services.tools import get_tasks, get_user_data
 from app.templates.system_prompt import PROMPT, GENERIC_RESPONSE, get_analyzer_prompt
 
@@ -177,3 +179,27 @@ def run_erp_workflow(query: str) -> str:
     llm_response = result.get("response", "No response generated")
     print(f"\nLLM response ---> {llm_response}\n")
     return llm_response
+
+
+def get_visual_graph():
+    """
+    Returns the path to the LangGraph workflow image.
+    Generates it only if it doesn't already exist.
+    """
+    os.makedirs(VISUAL_GRAPH_DIR, exist_ok=True)
+    image_path = VISUAL_GRAPH_DIR / "workflow_graph.png"
+
+    if not image_path.exists():
+        app = create_workflow()
+        png_bytes = app.get_graph().draw_mermaid_png()
+
+        with open(image_path, 'wb') as f:
+            f.write(png_bytes)
+
+        print(f"LangGraph workflow generated and saved to: {image_path}")
+    else:
+        print(f"Using cached LangGraph image from: {image_path}")
+
+    return image_path
+
+

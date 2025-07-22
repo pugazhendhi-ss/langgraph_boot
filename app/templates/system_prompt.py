@@ -1,3 +1,5 @@
+
+
 PROMPT = """Analyze the user query and extract information. Return a JSON with:
                     - email: extracted email address (empty string if not found)
                     - password: extracted password (empty string if not found)  
@@ -12,7 +14,8 @@ PROMPT = """Analyze the user query and extract information. Return a JSON with:
                     """
 
 GENERIC_RESPONSE = ("I can fetch and analyze your ERP task data. Provide your email or email and password "
-                    "to kick of the work flow.")
+                    "to kick of the work flow. \n"
+                    "You can see my workflow graph here: [visual graph](http://127.0.0.1:8900/visualize)")
 
 
 def get_analyzer_prompt(query: str):

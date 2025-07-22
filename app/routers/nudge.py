@@ -1,7 +1,8 @@
 from fastapi import APIRouter
+from fastapi.responses import FileResponse
 
 from app.pydantics.base_schema import ChatData
-from app.services.workflow import run_erp_workflow
+from app.services.workflow import run_erp_workflow, get_visual_graph
 
 nudge_router = APIRouter(tags=["ERP Workflow"])
 
@@ -17,3 +18,24 @@ async def generate_answer(
     except Exception as e:
         print(f"Error: {e}")
         raise e
+
+
+@nudge_router.get("/visualize")
+async def stream_visual_graph():
+    """
+    Streams the LangGraph workflow image to the frontend.
+    """
+    try:
+        image_path = get_visual_graph()
+        return FileResponse(
+            path=str(image_path),
+            media_type="image/png",
+            filename="workflow_graph.png"
+        )
+
+    except Exception as e:
+            print(f"Error: {e}")
+            raise e
+
+
+

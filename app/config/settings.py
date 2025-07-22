@@ -1,9 +1,17 @@
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
+
+# Directory setup
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+VISUAL_GRAPH_DIR = BASE_DIR / "app" / "visual_graph"
+VISUAL_GRAPH_DIR.mkdir(exist_ok=True)
+
 
 # API Keys
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
